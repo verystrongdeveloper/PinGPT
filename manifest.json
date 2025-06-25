@@ -1,0 +1,37 @@
+{
+    "manifest_version": 3,
+    "name": "Chatpin",
+    "version": "0.1.0",
+    "description": "ChatGPT 대화에 스마트 북마크 기능을 추가하는 Chrome 확장 프로그램",
+    "author": "Chatpin Team",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Chatpin - 북마크 관리"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://chat.openai.com/*",
+                "https://chatgpt.com/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "icons": {
+        "16": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMkM5LjEgMiAxMCAyLjkgMTAgNFYxMkMxMCAxMy4xIDkuMSAxNCA4IDE0UzYgMTMuMSA2IDEyVjRDNiAyLjkgNi45IDIgOCAyWiIgZmlsbD0iIzYzNjZmMSIvPgo8L3N2Zz4K",
+        "48": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTI0IDZDMjcuMyA2IDMwIDguNyAzMCAxMlYzNkMzMCAzOS4zIDI3LjMgNDIgMjQgNDJTMTggMzkuMyAxOCAzNlYxMkMxOCA4LjcgMjAuNyA2IDI0IDZaIiBmaWxsPSIjNjM2NmYxIi8+Cjwvc3ZnPgo=",
+        "128": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik02NCAxNkM3Mi44IDE2IDgwIDIzLjIgODAgMzJWOTZDODAgMTA0LjggNzIuOCAxMTIgNjQgMTEyUzQ4IDEwNC44IDQ4IDk2VjMyQzQ4IDIzLjIgNTUuMiAxNiA2NCAxNloiIGZpbGw9IiM2MzY2ZjEiLz4KPC9zdmc+Cg=="
+    }
+}
