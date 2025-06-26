@@ -7,6 +7,7 @@ const TRANSLATIONS = {
     subtitle: "Quick access to saved conversations",
     emptyTitle: "No bookmarks yet",
     emptySubtitle: "Click the 📌 button in chat to get started",
+    refreshCleared: "Bookmarks cleared on refresh",
     chatLabel: "Chat #",
     setRecent: "Set as recent bookmark",
     rename: "Rename",
@@ -23,6 +24,7 @@ const TRANSLATIONS = {
     subtitle: "저장된 대화에 빠르게 접근",
     emptyTitle: "아직 책갈피가 없습니다",
     emptySubtitle: "채팅에서 📌 버튼을 클릭하여 시작하세요",
+    refreshCleared: "새로고침으로 책갈피 초기화됨",
     chatLabel: "채팅 #",
     setRecent: "최근 책갈피로 설정",
     rename: "이름 변경",
@@ -39,6 +41,7 @@ const TRANSLATIONS = {
     subtitle: "保存された会話に素早くアクセス",
     emptyTitle: "まだブックマークがありません",
     emptySubtitle: "チャットで📌ボタンをクリックして始めましょう",
+    refreshCleared: "リフレッシュでブックマークがクリアされました",
     chatLabel: "チャット #",
     setRecent: "最近のブックマークに設定",
     rename: "名前を変更",
@@ -55,6 +58,7 @@ const TRANSLATIONS = {
     subtitle: "快速访问保存的对话",
     emptyTitle: "还没有书签",
     emptySubtitle: "在聊天中点击📌按钮开始使用",
+    refreshCleared: "刷新后书签已清除",
     chatLabel: "聊天 #",
     setRecent: "设为最近书签",
     rename: "重命名",
@@ -71,6 +75,7 @@ const TRANSLATIONS = {
     subtitle: "Acceso rápido a conversaciones guardadas",
     emptyTitle: "Aún no hay marcadores",
     emptySubtitle: "Haz clic en el botón 📌 en el chat para comenzar",
+    refreshCleared: "Marcadores eliminados al actualizar",
     chatLabel: "Chat #",
     setRecent: "Establecer como marcador reciente",
     rename: "Renombrar",
@@ -180,7 +185,7 @@ function renderEmptyState(pinList) {
   pinList.innerHTML = `
     <div class="empty-state">
       <span class="empty-state-icon">🔄</span>
-      <div class="empty-state-text">새로고침으로 책갈피 초기화됨</div>
+      <div class="empty-state-text">${t('refreshCleared')}</div>
       <div class="empty-state-subtext">${t('emptySubtitle')}</div>
     </div>
   `;
