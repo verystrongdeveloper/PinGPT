@@ -709,37 +709,38 @@ function addDynamicStyles() {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      padding: 16px 20px;
-      border-radius: 16px;
-      font-size: 14px;
+      background: #ffffff;
+      color: #1f2937;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: 600;
-      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       z-index: 1000;
       max-width: 240px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid #e5e7eb;
       display: flex;
       align-items: center;
       gap: 12px;
-      transform: translateX(120%) scale(0.8);
+      transform: translateY(-10px);
       opacity: 0;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.3s ease;
+      letter-spacing: -0.2px;
     }
     
     .toast-notification.show {
-      transform: translateX(0) scale(1);
+      transform: translateY(0);
       opacity: 1;
     }
     
     .toast-notification.fade-out {
-      transform: translateX(50px) scale(0.9);
+      transform: translateY(-10px);
       opacity: 0;
-      transition: all 0.3s ease-in;
+      transition: all 0.3s ease;
     }
     
     .toast-icon {
-      font-size: 18px;
+      font-size: 16px;
       flex-shrink: 0;
     }
     
