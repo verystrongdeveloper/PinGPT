@@ -121,6 +121,22 @@ let isDragScrolling = false;
 let isTouchScrolling = false;
 let currentLanguage = 'en';
 
+// ChatGPT 페이지 언어 감지 함수 (popup에서는 브라우저 언어 사용)
+function detectChatGPTLanguage() {
+  return detectBrowserLanguage();
+}
+
+// 브라우저 언어 감지 함수
+function detectBrowserLanguage() {
+  const browserLang = navigator.language || navigator.userLanguage;
+  const langCode = browserLang.split('-')[0].toLowerCase();
+  
+  // 지원하는 언어 목록
+  const supportedLanguages = ['en', 'ko', 'ja', 'zh', 'es'];
+  
+  return supportedLanguages.includes(langCode) ? langCode : 'en';
+}
+
 // 메인 초기화
 document.addEventListener('DOMContentLoaded', initializePopup);
 
@@ -140,9 +156,20 @@ function initializePopup() {
 }
 
 function loadLanguage(callback) {
-  chrome.storage.sync.get({ [CONSTANTS.LANGUAGE_KEY]: 'en' }, (data) => {
-    currentLanguage = data[CONSTANTS.LANGUAGE_KEY];
-    callback();
+  // 먼저 저장된 언어 설정이 있는지 확인
+  chrome.storage.sync.get([CONSTANTS.LANGUAGE_KEY], (data) => {
+    if (data[CONSTANTS.LANGUAGE_KEY]) {
+      // 이미 설정된 언어가 있으면 그것을 사용
+      currentLanguage = data[CONSTANTS.LANGUAGE_KEY];
+      callback();
+    } else {
+      // 설정된 언어가 없으면 자동 감지
+      const detectedLang = detectChatGPTLanguage();
+      chrome.storage.sync.set({ [CONSTANTS.LANGUAGE_KEY]: detectedLang }, () => {
+        currentLanguage = detectedLang;
+        callback();
+      });
+    }
   });
 }
 

@@ -65,20 +65,64 @@ const CONSTANTS = {
   ANIMATION_DELAY: 10
 };
 
-let currentLanguage = 'ko';
+let currentLanguage = 'en';
 
 let observerTimeout;
 
+// ChatGPT 페이지 언어 감지 함수
+function detectChatGPTLanguage() {
+  // HTML lang 속성 확인
+  const htmlLang = document.documentElement.lang;
+  if (htmlLang) {
+    const langCode = htmlLang.split('-')[0].toLowerCase();
+    const supportedLanguages = ['en', 'ko', 'ja', 'zh', 'es'];
+    if (supportedLanguages.includes(langCode)) {
+      return langCode;
+    }
+  }
+
+  // URL에서 언어 감지 (예: chatgpt.com/ko/, chatgpt.com/ja/ 등)
+  const pathLang = window.location.pathname.split('/')[1];
+  if (pathLang && ['ko', 'ja', 'zh', 'es'].includes(pathLang)) {
+    return pathLang;
+  }
+
+  // 브라우저 언어로 폴백
+  return detectBrowserLanguage();
+}
+
+// 브라우저 언어 감지 함수
+function detectBrowserLanguage() {
+  const browserLang = navigator.language || navigator.userLanguage;
+  const langCode = browserLang.split('-')[0].toLowerCase();
+  
+  // 지원하는 언어 목록
+  const supportedLanguages = ['en', 'ko', 'ja', 'zh', 'es'];
+  
+  return supportedLanguages.includes(langCode) ? langCode : 'en';
+}
+
 // 번역 함수
 function t(key) {
-  return TRANSLATIONS[currentLanguage]?.[key] || TRANSLATIONS['ko']?.[key] || key;
+  return TRANSLATIONS[currentLanguage]?.[key] || TRANSLATIONS['en']?.[key] || key;
 }
 
 // 언어 로드 함수
 function loadLanguage(callback) {
-  chrome.storage.sync.get({ [CONSTANTS.LANGUAGE_KEY]: 'ko' }, (data) => {
-    currentLanguage = data[CONSTANTS.LANGUAGE_KEY];
-    callback();
+  // 먼저 저장된 언어 설정이 있는지 확인
+  chrome.storage.sync.get([CONSTANTS.LANGUAGE_KEY], (data) => {
+    if (data[CONSTANTS.LANGUAGE_KEY]) {
+      // 이미 설정된 언어가 있으면 그것을 사용
+      currentLanguage = data[CONSTANTS.LANGUAGE_KEY];
+      callback();
+    } else {
+      // 설정된 언어가 없으면 자동 감지
+      const detectedLang = detectChatGPTLanguage();
+      chrome.storage.sync.set({ [CONSTANTS.LANGUAGE_KEY]: detectedLang }, () => {
+        currentLanguage = detectedLang;
+        callback();
+      });
+    }
   });
 }
 
@@ -385,7 +429,7 @@ function setupStorageListener() {
       
       // 언어 변경 감지
       if (changes[CONSTANTS.LANGUAGE_KEY]) {
-        currentLanguage = changes[CONSTANTS.LANGUAGE_KEY].newValue || 'ko';
+        currentLanguage = changes[CONSTANTS.LANGUAGE_KEY].newValue || detectChatGPTLanguage();
         updateAllUILanguage();
       }
     }
