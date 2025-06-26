@@ -156,6 +156,15 @@ function changeLanguage(languageCode) {
 function updateUILanguage() {
   document.querySelector('.title').textContent = t('title');
   document.querySelector('.subtitle').textContent = t('subtitle');
+  
+  // 모든 버튼의 title 업데이트
+  document.querySelectorAll('.rename-btn').forEach(btn => {
+    btn.title = t('rename');
+  });
+  
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.title = t('setRecent');
+  });
 }
 
 function setInitialHeight() {
@@ -220,10 +229,12 @@ function createPinElement(id, index) {
   
   const pinIcon = createPinIcon();
   const label = createPinLabel(id, index, row);
+  const renameBtn = createRenameButton(id, label);
   const starBtn = createStarButton(id, row);
   
   row.appendChild(pinIcon);
   row.appendChild(label);
+  row.appendChild(renameBtn);
   row.appendChild(starBtn);
   
   return row;
@@ -241,11 +252,31 @@ function createPinIcon() {
 function createPinLabel(id, index, row) {
   const label = document.createElement("span");
   label.className = "pin-text";
-  const chatNumber = id.split('-')[1] || index + 1;
-  label.innerText = `${t('chatLabel')}${chatNumber}`;
+  
+  // 저장된 이름이 있는지 확인
+  chrome.storage.sync.get({ 'chatpinNames': {} }, (data) => {
+    const names = data.chatpinNames || {};
+    if (names[id]) {
+      label.innerText = names[id];
+    } else {
+      const chatNumber = id.split('-')[1] || index + 1;
+      label.innerText = `${t('chatLabel')}${chatNumber}`;
+    }
+  });
   
   label.onclick = (e) => handlePinClick(e, row, id);
   return label;
+}
+
+// Rename 버튼 생성
+function createRenameButton(id, label) {
+  const renameBtn = document.createElement("button");
+  renameBtn.className = "rename-btn";
+  renameBtn.innerHTML = "✏️";
+  renameBtn.title = t('rename');
+  
+  renameBtn.onclick = (e) => handleRenameClick(e, id, label);
+  return renameBtn;
 }
 
 // 즐겨찾기 버튼 생성
@@ -266,6 +297,72 @@ function handlePinClick(e, row, id) {
   animateClick(row);
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, { type: 'JUMP_TO_PIN', id });
+  });
+}
+
+// Rename 클릭 처리
+function handleRenameClick(e, id, label) {
+  e.stopPropagation();
+  
+  const currentText = label.innerText;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'rename-input';
+  input.value = currentText;
+  input.maxLength = 20; // 최대 20글자 제한
+  input.style.cssText = `
+    background: transparent;
+    border: 1px solid #6366f1;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    outline: none;
+    width: 100%;
+  `;
+  
+  // 기존 라벨을 input으로 교체
+  label.style.display = 'none';
+  label.parentNode.insertBefore(input, label.nextSibling);
+  
+  input.focus();
+  input.select();
+  
+  const saveRename = () => {
+    const newName = input.value.trim();
+    if (newName && newName !== currentText && newName.length <= 20) {
+      chrome.storage.sync.get({ 'chatpinNames': {} }, (data) => {
+        const names = data.chatpinNames || {};
+        names[id] = newName;
+        chrome.storage.sync.set({ 'chatpinNames': names }, () => {
+          label.innerText = newName;
+          showNotification(t('nameChanged'), "success");
+        });
+      });
+    } else {
+      label.innerText = currentText;
+    }
+    
+    // input 제거하고 라벨 다시 표시
+    input.remove();
+    label.style.display = '';
+  };
+  
+  const cancelRename = () => {
+    input.remove();
+    label.style.display = '';
+  };
+  
+  input.addEventListener('blur', saveRename);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveRename();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      cancelRename();
+    }
   });
 }
 

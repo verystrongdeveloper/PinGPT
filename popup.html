@@ -176,6 +176,37 @@
       transform: scale(0.95);
     }
 
+    .rename-btn {
+      background: linear-gradient(135deg, #6b7280, #9ca3af);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 6px rgba(107, 114, 128, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      margin-right: 8px;
+    }
+
+    .rename-btn:hover {
+      transform: scale(1.1);
+      opacity: 1;
+      box-shadow: 0 3px 8px rgba(107, 114, 128, 0.4);
+    }
+
+    .rename-btn:active {
+      transform: scale(0.95);
+    }
+
+    .pin:hover .rename-btn {
+      opacity: 1;
+    }
+
     .empty-state {
       text-align: center;
       padding: 30px 20px 25px 20px;
