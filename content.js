@@ -6,45 +6,45 @@ const TRANSLATIONS = {
   en: {
     addBookmark: "Add bookmark",
     removeBookmark: "Remove bookmark",
-    bookmarkAdded: "📌 Bookmark added!",
-    bookmarkRemoved: "📌 Bookmark removed!",
-    jumpToRecent: "🎯 Jumped to recent bookmark!",
+    bookmarkAdded: "Bookmark added!",
+    bookmarkRemoved: "Bookmark removed!",
+    jumpToRecent: "Jumped to recent bookmark!",
     noBookmarks: "😅 No bookmarks found",
     quickJumpBtn: "🧭 Jump to recent bookmark"
   },
   ko: {
     addBookmark: "책갈피 추가",
     removeBookmark: "책갈피 제거",
-    bookmarkAdded: "📌 책갈피 추가 완료!",
-    bookmarkRemoved: "📌 책갈피 제거됨!",
-    jumpToRecent: "🎯 최근 책갈피로 이동!",
+    bookmarkAdded: "책갈피 추가 완료!",
+    bookmarkRemoved: "책갈피 제거됨!",
+    jumpToRecent: "최근 책갈피로 이동!",
     noBookmarks: "😅 책갈피가 없습니다",
     quickJumpBtn: "🧭 최근 책갈피로 이동"
   },
   ja: {
     addBookmark: "ブックマークを追加",
     removeBookmark: "ブックマークを削除",
-    bookmarkAdded: "📌 ブックマーク追加完了！",
-    bookmarkRemoved: "📌 ブックマーク削除済み！",
-    jumpToRecent: "🎯 最近のブックマークに移動！",
+    bookmarkAdded: "ブックマーク追加完了！",
+    bookmarkRemoved: "ブックマーク削除済み！",
+    jumpToRecent: "最近のブックマークに移動！",
     noBookmarks: "😅 ブックマークがありません",
     quickJumpBtn: "🧭 最近のブックマークに移動"
   },
   zh: {
     addBookmark: "添加书签",
     removeBookmark: "移除书签",
-    bookmarkAdded: "📌 书签添加成功！",
-    bookmarkRemoved: "📌 书签已移除！",
-    jumpToRecent: "🎯 已跳转到最近书签！",
+    bookmarkAdded: "书签添加成功！",
+    bookmarkRemoved: "书签已移除！",
+    jumpToRecent: "已跳转到最近书签！",
     noBookmarks: "😅 没有找到书签",
     quickJumpBtn: "🧭 跳转到最近书签"
   },
   es: {
     addBookmark: "Añadir marcador",
     removeBookmark: "Eliminar marcador",
-    bookmarkAdded: "📌 ¡Marcador añadido!",
-    bookmarkRemoved: "📌 ¡Marcador eliminado!",
-    jumpToRecent: "🎯 ¡Saltado al marcador reciente!",
+    bookmarkAdded: "¡Marcador añadido!",
+    bookmarkRemoved: "¡Marcador eliminado!",
+    jumpToRecent: "¡Saltado al marcador reciente!",
     noBookmarks: "😅 No se encontraron marcadores",
     quickJumpBtn: "🧭 Saltar al marcador reciente"
   }
@@ -282,43 +282,81 @@ function showNotification(message, type = "info") {
   const existing = document.querySelector(CONSTANTS.SELECTORS.NOTIFICATION);
   if (existing) existing.remove();
 
+  // 메시지 유형에 따른 아이콘 매핑
+  let icon = '';
+  if (message.includes('추가') || message.includes('added') || message.includes('追加') || message.includes('添加') || message.includes('añadido')) {
+    icon = '📌';
+  } else if (message.includes('삭제') || message.includes('removed') || message.includes('削除') || message.includes('移除') || message.includes('eliminado')) {
+    icon = '🗑️';
+  } else if (message.includes('설정') || message.includes('bookmark') || message.includes('設定') || message.includes('设为') || message.includes('Establecido')) {
+    icon = '⭐';
+  } else if (message.includes('이동') || message.includes('Jumped') || message.includes('移動') || message.includes('跳转') || message.includes('Saltado')) {
+    icon = '🎯';
+  } else if (message.includes('변경') || message.includes('changed') || message.includes('変更') || message.includes('更改') || message.includes('cambiado')) {
+    icon = '✏️';
+  } else {
+    icon = 'ℹ️';
+  }
+
   const notification = document.createElement('div');
   notification.className = 'pingpt-notification';
-  notification.textContent = message;
-
-  const backgroundColor = '#ffffff';
-  const textColor = type === 'success' ? '#059669' : '#1d4ed8';
-  const borderColor = type === 'success' ? '#d1fae5' : '#dbeafe';
+  
+  notification.innerHTML = `
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-message">${message}</div>
+  `;
 
   notification.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
-    background: ${backgroundColor};
-    color: ${textColor};
-    padding: 12px 18px;
-    border-radius: 8px;
-    font-size: 13px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-size: 14px;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 10000;
-    border: 1px solid ${borderColor};
-    transform: translateY(-10px);
+    max-width: 240px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateX(120%) scale(0.8);
     opacity: 0;
-    transition: all 0.3s ease;
-    letter-spacing: -0.2px;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   `;
+
+  // 아이콘 스타일
+  const iconEl = notification.querySelector('.toast-icon');
+  if (iconEl) {
+    iconEl.style.cssText = `
+      font-size: 18px;
+      flex-shrink: 0;
+    `;
+  }
+
+  // 메시지 스타일
+  const messageEl = notification.querySelector('.toast-message');
+  if (messageEl) {
+    messageEl.style.cssText = `
+      flex: 1;
+      line-height: 1.3;
+    `;
+  }
 
   document.body.appendChild(notification);
 
   setTimeout(() => {
-    notification.style.transform = 'translateY(0)';
+    notification.style.transform = 'translateX(0) scale(1)';
     notification.style.opacity = '1';
   }, CONSTANTS.ANIMATION_DELAY);
 
   setTimeout(() => {
+    notification.style.transform = 'translateX(50px) scale(0.9)';
     notification.style.opacity = '0';
-    notification.style.transform = 'translateY(-10px)';
+    notification.style.transition = 'all 0.3s ease-in';
     setTimeout(() => {
       if (notification.parentNode) {
         notification.parentNode.removeChild(notification);
