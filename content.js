@@ -19,12 +19,28 @@ let observerTimeout;
 
 // 메인 초기화 함수
 function initialize() {
+  // 페이지 로드 시 기존 책갈피 모두 삭제
+  clearAllBookmarks();
+  
   assignUniqueIds();
   injectPinButtons();
   injectQuickJumpButton();
   setupMutationObserver();
   setupMessageListener();
   setupStorageListener();
+}
+
+// 모든 책갈피 삭제 함수
+function clearAllBookmarks() {
+  // 페이지 로드 시마다 항상 책갈피 초기화
+  chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: [] }, () => {
+    console.log('PinGPT: 새로고침으로 인한 책갈피 초기화');
+  });
+  
+  // 네임스 키도 초기화
+  chrome.storage.sync.set({ 'chatpinNames': {} }, () => {
+    console.log('PinGPT: 책갈피 이름 초기화');
+  });
 }
 
 // 고유 ID 할당

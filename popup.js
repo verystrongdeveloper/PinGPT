@@ -1,9 +1,94 @@
 // PinGPT Chrome Extension - Popup Script
 // 책갈피 관리 팝업의 메인 스크립트
 
+const TRANSLATIONS = {
+  en: {
+    title: "📌 PinGPT",
+    subtitle: "Quick access to saved conversations",
+    emptyTitle: "No bookmarks yet",
+    emptySubtitle: "Click the 📌 button in chat to get started",
+    chatLabel: "Chat #",
+    setRecent: "Set as recent bookmark",
+    rename: "Rename",
+    recentSet: "✨ Set as recent bookmark!",
+    nameChanged: "📝 Name changed!",
+    bookmarkAdded: "📌 Bookmark added!",
+    bookmarkRemoved: "🗑️ Bookmark removed",
+    jumpToRecent: "🎯 Jumped to recent bookmark!",
+    noBookmarks: "😅 No bookmarks found",
+    quickJump: "🧭 Jump to recent bookmark"
+  },
+  ko: {
+    title: "📌 PinGPT",
+    subtitle: "저장된 대화에 빠르게 접근",
+    emptyTitle: "아직 책갈피가 없습니다",
+    emptySubtitle: "채팅에서 📌 버튼을 클릭하여 시작하세요",
+    chatLabel: "채팅 #",
+    setRecent: "최근 책갈피로 설정",
+    rename: "이름 변경",
+    recentSet: "✨ 최근 책갈피로 설정!",
+    nameChanged: "📝 이름이 변경되었습니다!",
+    bookmarkAdded: "📌 책갈피 추가 완료!",
+    bookmarkRemoved: "🗑️ 책갈피 삭제됨",
+    jumpToRecent: "🎯 최근 책갈피로 이동!",
+    noBookmarks: "😅 책갈피가 없습니다",
+    quickJump: "🧭 최근 책갈피로 이동"
+  },
+  ja: {
+    title: "📌 PinGPT",
+    subtitle: "保存された会話に素早くアクセス",
+    emptyTitle: "まだブックマークがありません",
+    emptySubtitle: "チャットで📌ボタンをクリックして始めましょう",
+    chatLabel: "チャット #",
+    setRecent: "最近のブックマークに設定",
+    rename: "名前を変更",
+    recentSet: "✨ 最近のブックマークに設定しました！",
+    nameChanged: "📝 名前が変更されました！",
+    bookmarkAdded: "📌 ブックマーク追加完了！",
+    bookmarkRemoved: "🗑️ ブックマーク削除済み！",
+    jumpToRecent: "🎯 最近のブックマークに移動！",
+    noBookmarks: "😅 ブックマークがありません",
+    quickJump: "🧭 最近のブックマークに移動"
+  },
+  zh: {
+    title: "📌 PinGPT",
+    subtitle: "快速访问保存的对话",
+    emptyTitle: "还没有书签",
+    emptySubtitle: "在聊天中点击📌按钮开始使用",
+    chatLabel: "聊天 #",
+    setRecent: "设为最近书签",
+    rename: "重命名",
+    recentSet: "✨ 已设为最近书签！",
+    nameChanged: "📝 名称已更改！",
+    bookmarkAdded: "📌 书签添加成功！",
+    bookmarkRemoved: "🗑️ 书签已移除！",
+    jumpToRecent: "🎯 已跳转到最近书签！",
+    noBookmarks: "😅 没有找到书签",
+    quickJump: "🧭 跳转到最近书签"
+  },
+  es: {
+    title: "📌 PinGPT",
+    subtitle: "Acceso rápido a conversaciones guardadas",
+    emptyTitle: "Aún no hay marcadores",
+    emptySubtitle: "Haz clic en el botón 📌 en el chat para comenzar",
+    chatLabel: "Chat #",
+    setRecent: "Establecer como marcador reciente",
+    rename: "Renombrar",
+    recentSet: "✨ ¡Establecido como marcador reciente!",
+    nameChanged: "📝 ¡Nombre cambiado!",
+    bookmarkAdded: "📌 ¡Marcador añadido!",
+    bookmarkRemoved: "🗑️ ¡Marcador eliminado!",
+    jumpToRecent: "🎯 ¡Saltado al marcador reciente!",
+    noBookmarks: "😅 No se encontraron marcadores",
+    quickJump: "🧭 Saltar al marcador reciente"
+  }
+};
+
 // 상수 정의
 const CONSTANTS = {
   STORAGE_KEY: 'chatpins',
+  NAMES_KEY: 'chatpinNames',
+  LANGUAGE_KEY: 'chatpinLanguage',
   DIMENSIONS: {
     MIN_HEIGHT: 260,
     MAX_HEIGHT: 450,
@@ -29,15 +114,43 @@ const CONSTANTS = {
 // 전역 변수
 let isDragScrolling = false;
 let isTouchScrolling = false;
+let currentLanguage = 'en';
 
 // 메인 초기화
 document.addEventListener('DOMContentLoaded', initializePopup);
 
+function t(key) {
+  return TRANSLATIONS[currentLanguage]?.[key] || TRANSLATIONS['en']?.[key] || key;
+}
+
 function initializePopup() {
-  const pinList = document.getElementById('pin-list');
-  const content = document.getElementById('content');
-  setInitialHeight();
-  loadPins(pinList, content);
+  loadLanguage(() => {
+    updateUILanguage();
+    const pinList = document.getElementById('pin-list');
+    const content = document.getElementById('content');
+    setInitialHeight();
+    loadPins(pinList, content);
+    setupLanguageSelector();
+  });
+}
+
+function loadLanguage(callback) {
+  chrome.storage.sync.get({ [CONSTANTS.LANGUAGE_KEY]: 'en' }, (data) => {
+    currentLanguage = data[CONSTANTS.LANGUAGE_KEY];
+    callback();
+  });
+}
+
+function changeLanguage(languageCode) {
+  currentLanguage = languageCode;
+  chrome.storage.sync.set({ [CONSTANTS.LANGUAGE_KEY]: languageCode }, () => {
+    location.reload();
+  });
+}
+
+function updateUILanguage() {
+  document.querySelector('.title').textContent = t('title');
+  document.querySelector('.subtitle').textContent = t('subtitle');
 }
 
 function setInitialHeight() {
@@ -66,9 +179,9 @@ function renderEmptyState(pinList) {
   document.body.style.height = `${CONSTANTS.DIMENSIONS.MIN_HEIGHT}px`;
   pinList.innerHTML = `
     <div class="empty-state">
-      <span class="empty-state-icon">💡</span>
-      <div class="empty-state-text">아직 책갈피가 없습니다</div>
-      <div class="empty-state-subtext">채팅에서 📌 버튼을 클릭하여 시작하세요</div>
+      <span class="empty-state-icon">🔄</span>
+      <div class="empty-state-text">새로고침으로 책갈피 초기화됨</div>
+      <div class="empty-state-subtext">${t('emptySubtitle')}</div>
     </div>
   `;
 }
@@ -124,7 +237,7 @@ function createPinLabel(id, index, row) {
   const label = document.createElement("span");
   label.className = "pin-text";
   const chatNumber = id.split('-')[1] || index + 1;
-  label.innerText = `채팅 #${chatNumber}`;
+  label.innerText = `${t('chatLabel')}${chatNumber}`;
   
   label.onclick = (e) => handlePinClick(e, row, id);
   return label;
@@ -135,7 +248,7 @@ function createStarButton(id, row) {
   const starBtn = document.createElement("button");
   starBtn.className = "star-btn";
   starBtn.innerHTML = "⭐";
-  starBtn.title = "최근 책갈피로 설정";
+  starBtn.title = t('setRecent');
   
   starBtn.onclick = (e) => handleStarClick(e, starBtn, id);
   return starBtn;
@@ -192,7 +305,7 @@ function moveToTop(id) {
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
     const reordered = data[CONSTANTS.STORAGE_KEY].filter((x) => x !== id).concat(id);
     chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: reordered }, () => {
-      showNotification("✨ 최근 책갈피로 설정!", "success");
+      showNotification(t('recentSet'), "success");
       setTimeout(() => location.reload(), CONSTANTS.ANIMATION.RELOAD_DELAY);
     });
   });
@@ -408,7 +521,7 @@ function deletePin(element, bookmarkId) {
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
     const updated = data[CONSTANTS.STORAGE_KEY].filter(pin => pin !== bookmarkId);
     chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: updated }, () => {
-      showNotification("🗑️ 책갈피 삭제됨", "info");
+      showNotification(t('bookmarkRemoved'), "info");
       
       setTimeout(() => {
         if (element.parentNode) {
@@ -430,7 +543,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     const newPins = changes[CONSTANTS.STORAGE_KEY].newValue || [];
     
     if (newPins.length > oldPins.length) {
-              showNotification("📌 책갈피 추가 완료!", "success");
+              showNotification(t('bookmarkAdded'), "success");
     }
   }
 });
@@ -525,4 +638,24 @@ function addDynamicStyles() {
   `;
 
   document.head.appendChild(style);
+}
+
+function setupLanguageSelector() {
+  const header = document.querySelector('.header');
+  if (!header) return;
+
+  const selector = document.createElement('select');
+  selector.className = 'language-selector';
+  selector.innerHTML = `
+    <option value="en">🇺🇸 English</option>
+    <option value="ko">🇰🇷 한국어</option>
+    <option value="ja">🇯🇵 日本語</option>
+    <option value="zh">🇨🇳 中文</option>
+    <option value="es">🇪🇸 Español</option>
+  `;
+  selector.value = currentLanguage;
+
+  selector.addEventListener('change', (e) => changeLanguage(e.target.value));
+  selector.title = 'Change language';
+  header.appendChild(selector);
 }
