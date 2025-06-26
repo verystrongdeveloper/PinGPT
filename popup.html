@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatpin - 북마크 관리</title>
+  <title>PinGPT - 책갈피 관리</title>
   <style>
     :root {
       --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
@@ -90,7 +90,7 @@
       display: none;
     }
 
-    .bookmark {
+    .pin {
       cursor: pointer;
       padding: 14px 16px;
       margin-bottom: 10px;
@@ -105,7 +105,7 @@
       align-items: center;
     }
 
-    .bookmark::before {
+    .pin::before {
       content: '';
       position: absolute;
       top: 0;
@@ -117,23 +117,23 @@
       transition: transform 0.3s ease;
     }
 
-    .bookmark:hover::before {
+    .pin:hover::before {
       transform: scaleX(1);
     }
 
-    .bookmark:hover {
+    .pin:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover), 0 3px 8px rgba(99, 102, 241, 0.2);
       border-color: #e0e7ff;
       background: #fefefe;
     }
 
-    .bookmark:active {
+    .pin:active {
       transform: translateY(-1px);
       transition: transform 0.1s;
     }
 
-    .bookmark-icon {
+    .pin-icon {
       font-size: 16px;
       margin-right: 12px;
       opacity: 0.85;
@@ -143,7 +143,7 @@
       background-clip: text;
     }
 
-    .bookmark-text {
+    .pin-text {
       flex: 1;
       font-size: 14px;
       font-weight: 700;
@@ -217,11 +217,11 @@
 </head>
 <body>
   <div class="header">
-    <h1 class="title">📌 Chatpins</h1>
-    <div class="subtitle">스마트 채팅 북마크 관리</div>
+    <h1 class="title">📌 PinGPT</h1>
+    <div class="subtitle">스마트 채팅 책갈피 관리</div>
   </div>
   <div class="content" id="content">
-    <div id="bookmark-list"></div>
+    <div id="pin-list"></div>
   </div>
 
   <script src="popup.js"></script>

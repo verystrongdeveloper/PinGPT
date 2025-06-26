@@ -1,13 +1,13 @@
-// ChatPin Chrome Extension - Content Script
-// ChatGPT 대화에 북마크 기능을 추가하는 컨텐츠 스크립트
+// PinGPT Chrome Extension - Content Script
+// ChatGPT 대화에 책갈피 기능을 추가하는 컨텐츠 스크립트
 
 // 상수 정의
 const CONSTANTS = {
   SELECTORS: {
     MARKDOWN: '.markdown',
-    BOOKMARK_BTN: '.chatpin-btn',
-    NOTIFICATION: '.chatpin-notification',
-    QUICK_JUMP: '#chatpin-quickjump'
+    PIN_BTN: '.pingpt-btn',
+    NOTIFICATION: '.pingpt-notification',
+    QUICK_JUMP: '#pingpt-quickjump'
   },
   STORAGE_KEY: 'chatpins',
   DEBOUNCE_DELAY: 100,
@@ -20,7 +20,7 @@ let observerTimeout;
 // 메인 초기화 함수
 function initialize() {
   assignUniqueIds();
-  injectBookmarkButtons();
+  injectPinButtons();
   injectQuickJumpButton();
   setupMutationObserver();
   setupMessageListener();
@@ -30,28 +30,28 @@ function initialize() {
 // 고유 ID 할당
 function assignUniqueIds() {
   document.querySelectorAll(CONSTANTS.SELECTORS.MARKDOWN).forEach((el, idx) => {
-    if (!el.dataset.chatpinId) {
-      el.dataset.chatpinId = `chatpin-${idx}`;
+    if (!el.dataset.pingptId) {
+      el.dataset.pingptId = `pingpt-${idx}`;
     }
   });
 }
 
-// 북마크 버튼 생성 및 삽입
-function injectBookmarkButtons() {
+// 책갈피 버튼 생성 및 삽입
+function injectPinButtons() {
   document.querySelectorAll(CONSTANTS.SELECTORS.MARKDOWN).forEach((el) => {
-    if (el.querySelector(CONSTANTS.SELECTORS.BOOKMARK_BTN)) return;
+    if (el.querySelector(CONSTANTS.SELECTORS.PIN_BTN)) return;
 
-    const btn = createBookmarkButton(el);
+    const btn = createPinButton(el);
     el.prepend(btn);
-    updateButtonState(btn, el.dataset.chatpinId);
+    updateButtonState(btn, el.dataset.pingptId);
   });
 }
 
-// 북마크 버튼 생성
-function createBookmarkButton(element) {
+// 책갈피 버튼 생성
+function createPinButton(element) {
   const btn = document.createElement('button');
   btn.innerText = '📌';
-  btn.className = 'chatpin-btn';
+  btn.className = 'pingpt-btn';
   btn.style.cssText = `
     margin-bottom: 6px;
     display: block;
@@ -64,78 +64,78 @@ function createBookmarkButton(element) {
     filter: hue-rotate(240deg) saturate(1.2);
     transform: scale(1);
   `;
-  btn.title = '북마크 추가';
+  btn.title = '책갈피 추가';
 
-  btn.onclick = () => handleBookmarkClick(btn, element);
+  btn.onclick = () => handlePinClick(btn, element);
   return btn;
 }
 
-// 북마크 클릭 처리
-function handleBookmarkClick(btn, element) {
-  const id = element.dataset.chatpinId;
+// 책갈피 클릭 처리
+function handlePinClick(btn, element) {
+  const id = element.dataset.pingptId;
   
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
-    const bookmarks = data[CONSTANTS.STORAGE_KEY];
-    const isBookmarked = bookmarks.includes(id);
+    const pins = data[CONSTANTS.STORAGE_KEY];
+    const isPinned = pins.includes(id);
     
-    if (isBookmarked) {
-      removeBookmark(btn, id, bookmarks);
+    if (isPinned) {
+      removePin(btn, id, pins);
     } else {
-      addBookmark(btn, id, bookmarks);
+      addPin(btn, id, pins);
     }
   });
 }
 
-// 북마크 추가
-function addBookmark(btn, id, bookmarks) {
-  const updated = [...bookmarks, id];
+// 책갈피 추가
+function addPin(btn, id, pins) {
+  const updated = [...pins, id];
   chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: updated }, () => {
     updateButtonVisual(btn, true);
-    showNotification("📌 북마크 추가 완료!", "success");
-    scrollToBookmark(id);
+    showNotification("📌 책갈피 추가 완료!", "success");
+    scrollToPin(id);
   });
 }
 
-// 북마크 제거
-function removeBookmark(btn, id, bookmarks) {
-  const updated = bookmarks.filter(pin => pin !== id);
+// 책갈피 제거
+function removePin(btn, id, pins) {
+  const updated = pins.filter(pin => pin !== id);
   chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: updated }, () => {
     updateButtonVisual(btn, false);
-    showNotification("📌 북마크 제거됨!", "info");
+    showNotification("📌 책갈피 제거됨!", "info");
   });
 }
 
 // 버튼 상태 업데이트
-function updateButtonState(btn, id, isBookmarked = null) {
-  if (isBookmarked !== null) {
-    updateButtonVisual(btn, isBookmarked);
+function updateButtonState(btn, id, isPinned = null) {
+  if (isPinned !== null) {
+    updateButtonVisual(btn, isPinned);
     return;
   }
   
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
-    const bookmarked = data[CONSTANTS.STORAGE_KEY].includes(id);
-    updateButtonVisual(btn, bookmarked);
+    const pinned = data[CONSTANTS.STORAGE_KEY].includes(id);
+    updateButtonVisual(btn, pinned);
   });
 }
 
 // 버튼 시각적 상태 업데이트
-function updateButtonVisual(btn, isBookmarked) {
-  if (isBookmarked) {
+function updateButtonVisual(btn, isPinned) {
+  if (isPinned) {
     btn.style.filter = 'none';
-    btn.title = '북마크 제거';
+    btn.title = '책갈피 제거';
     btn.style.transform = 'scale(1.2)';
-    btn.dataset.bookmarked = 'true';
+    btn.dataset.pinned = 'true';
   } else {
     btn.style.filter = 'hue-rotate(240deg) saturate(1.2)';
-    btn.title = '북마크 추가';
+    btn.title = '책갈피 추가';
     btn.style.transform = 'scale(1)';
-    btn.dataset.bookmarked = 'false';
+    btn.dataset.pinned = 'false';
   }
 }
 
-// 북마크로 스크롤
-function scrollToBookmark(id) {
-  const el = document.querySelector(`[data-chatpin-id="${id}"]`);
+// 책갈피로 스크롤
+function scrollToPin(id) {
+  const el = document.querySelector(`[data-pingpt-id="${id}"]`);
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
@@ -143,11 +143,11 @@ function scrollToBookmark(id) {
 
 // 빠른 이동 버튼 생성
 function injectQuickJumpButton() {
-  if (document.getElementById('chatpin-quickjump')) return;
+  if (document.getElementById('pingpt-quickjump')) return;
   
   const btn = document.createElement('button');
-  btn.id = 'chatpin-quickjump';
-  btn.innerText = '🧭 최근 북마크로 이동';
+  btn.id = 'pingpt-quickjump';
+  btn.innerText = '🧭 최근 책갈피로 이동';
   btn.style.cssText = `
     position: fixed;
     bottom: 20px;
@@ -182,14 +182,14 @@ function injectQuickJumpButton() {
 // 빠른 이동 처리
 function handleQuickJump() {
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
-    const bookmarks = data[CONSTANTS.STORAGE_KEY];
-    const lastBookmark = bookmarks[bookmarks.length - 1];
+    const pins = data[CONSTANTS.STORAGE_KEY];
+    const lastPin = pins[pins.length - 1];
     
-    if (lastBookmark) {
-      scrollToBookmark(lastBookmark);
-      showNotification("🎯 최근 북마크로 이동!", "info");
+    if (lastPin) {
+      scrollToPin(lastPin);
+      showNotification("🎯 최근 책갈피로 이동!", "info");
     } else {
-      showNotification("😅 북마크가 없습니다", "info");
+      showNotification("😅 책갈피가 없습니다", "info");
     }
   });
 }
@@ -200,7 +200,7 @@ function showNotification(message, type = "info") {
   if (existing) existing.remove();
 
   const notification = document.createElement('div');
-  notification.className = 'chatpin-notification';
+  notification.className = 'pingpt-notification';
   notification.textContent = message;
 
   const backgroundColor = '#ffffff';
@@ -247,8 +247,8 @@ function showNotification(message, type = "info") {
 // 메시지 리스너 설정
 function setupMessageListener() {
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.type === 'JUMP_TO_BOOKMARK') {
-      scrollToBookmark(msg.id);
+    if (msg.type === 'JUMP_TO_PIN') {
+      scrollToPin(msg.id);
     }
   });
 }
@@ -265,15 +265,15 @@ function setupStorageListener() {
 
 // 모든 버튼 상태 업데이트
 function updateAllButtonStates(newPins) {
-  document.querySelectorAll(CONSTANTS.SELECTORS.BOOKMARK_BTN).forEach(btn => {
+  document.querySelectorAll(CONSTANTS.SELECTORS.PIN_BTN).forEach(btn => {
     const element = btn.parentElement;
-    if (element && element.dataset.chatpinId) {
-      const id = element.dataset.chatpinId;
-      const isBookmarked = newPins.includes(id);
-      const currentState = btn.dataset.bookmarked === 'true';
+    if (element && element.dataset.pingptId) {
+      const id = element.dataset.pingptId;
+      const isPinned = newPins.includes(id);
+      const currentState = btn.dataset.pinned === 'true';
       
-      if (isBookmarked !== currentState) {
-        updateButtonVisual(btn, isBookmarked);
+      if (isPinned !== currentState) {
+        updateButtonVisual(btn, isPinned);
       }
     }
   });
@@ -285,7 +285,7 @@ function setupMutationObserver() {
     clearTimeout(observerTimeout);
     observerTimeout = setTimeout(() => {
       assignUniqueIds();
-      injectBookmarkButtons();
+      injectPinButtons();
       injectQuickJumpButton();
     }, CONSTANTS.DEBOUNCE_DELAY);
   });

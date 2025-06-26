@@ -1,5 +1,5 @@
-// ChatPin Chrome Extension - Popup Script
-// 북마크 관리 팝업의 메인 스크립트
+// PinGPT Chrome Extension - Popup Script
+// 책갈피 관리 팝업의 메인 스크립트
 
 // 상수 정의
 const CONSTANTS = {
@@ -34,99 +34,99 @@ let isTouchScrolling = false;
 document.addEventListener('DOMContentLoaded', initializePopup);
 
 function initializePopup() {
-  const bookmarkList = document.getElementById('bookmark-list');
+  const pinList = document.getElementById('pin-list');
   const content = document.getElementById('content');
   setInitialHeight();
-  loadBookmarks(bookmarkList, content);
+  loadPins(pinList, content);
 }
 
 function setInitialHeight() {
   document.body.style.height = `${CONSTANTS.DIMENSIONS.MIN_HEIGHT}px`;
 }
 
-// 북마크 데이터 로드 및 렌더링
-function loadBookmarks(bookmarkList, content) {
+// 책갈피 데이터 로드 및 렌더링
+function loadPins(pinList, content) {
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
-    const bookmarks = data[CONSTANTS.STORAGE_KEY] || [];
+    const pins = data[CONSTANTS.STORAGE_KEY] || [];
     
-    if (bookmarks.length === 0) {
-      renderEmptyState(bookmarkList);
+    if (pins.length === 0) {
+      renderEmptyState(pinList);
       return;
     }
     
-    adjustPopupHeight(bookmarks.length);
+    adjustPopupHeight(pins.length);
     setupDragScroll(content);
-    renderBookmarks(bookmarkList, bookmarks);
+    renderPins(pinList, pins);
     addDynamicStyles();
   });
 }
 
 // 빈 상태 렌더링
-function renderEmptyState(bookmarkList) {
+function renderEmptyState(pinList) {
   document.body.style.height = `${CONSTANTS.DIMENSIONS.MIN_HEIGHT}px`;
-  bookmarkList.innerHTML = `
+  pinList.innerHTML = `
     <div class="empty-state">
       <span class="empty-state-icon">💡</span>
-      <div class="empty-state-text">아직 북마크가 없습니다</div>
+      <div class="empty-state-text">아직 책갈피가 없습니다</div>
       <div class="empty-state-subtext">채팅에서 📌 버튼을 클릭하여 시작하세요</div>
     </div>
   `;
 }
 
 // 팝업 높이 조정
-function adjustPopupHeight(bookmarkCount) {
+function adjustPopupHeight(pinCount) {
   const { ITEM_HEIGHT, HEADER_HEIGHT, CONTENT_PADDING, MAX_VISIBLE_ITEMS, MIN_HEIGHT, MAX_HEIGHT } = CONSTANTS.DIMENSIONS;
-  const visibleItems = Math.min(bookmarkCount, MAX_VISIBLE_ITEMS);
+  const visibleItems = Math.min(pinCount, MAX_VISIBLE_ITEMS);
   const dynamicHeight = HEADER_HEIGHT + (visibleItems * ITEM_HEIGHT) + CONTENT_PADDING;
   const finalHeight = Math.min(Math.max(dynamicHeight, MIN_HEIGHT), MAX_HEIGHT);
   
   document.body.style.height = `${finalHeight}px`;
 }
 
-// 북마크 목록 렌더링
-function renderBookmarks(bookmarkList, bookmarks) {
-  bookmarks.forEach((id, index) => {
-    const bookmarkElement = createBookmarkElement(id, index);
-    bookmarkList.appendChild(bookmarkElement);
+// 책갈피 목록 렌더링
+function renderPins(pinList, pins) {
+  pins.forEach((id, index) => {
+    const pinElement = createPinElement(id, index);
+    pinList.appendChild(pinElement);
   });
 }
 
-// 북마크 요소 생성
-function createBookmarkElement(id, index) {
+// 책갈피 요소 생성
+function createPinElement(id, index) {
   const row = document.createElement("div");
-  row.className = "bookmark";
-  row.dataset.bookmarkId = id;
+  row.className = "pin";
+  row.dataset.pinId = id;
   
-  setupBookmarkAnimation(row, index);
+  setupPinAnimation(row, index);
   setupSwipeToDelete(row, id);
   
-  const bookmarkIcon = createBookmarkIcon();
-  const label = createBookmarkLabel(id, index, row);
+  const pinIcon = createPinIcon();
+  const label = createPinLabel(id, index, row);
   const starBtn = createStarButton(id, row);
   
-  row.appendChild(bookmarkIcon);
+  row.appendChild(pinIcon);
   row.appendChild(label);
   row.appendChild(starBtn);
   
   return row;
 }
 
-// 북마크 아이콘 생성
-function createBookmarkIcon() {
+// 책갈피 아이콘 생성
+function createPinIcon() {
   const icon = document.createElement("span");
-  icon.className = "bookmark-icon";
+  icon.className = "pin-icon";
   icon.innerHTML = "💬";
   return icon;
 }
 
-// 북마크 라벨 생성
-function createBookmarkLabel(id, index, row) {
+// 책갈피 라벨 생성
+function createPinLabel(id, index, row) {
   const label = document.createElement("span");
-  label.className = "bookmark-text";
+  label.className = "pin-text";
   const chatNumber = id.split('-')[1] || index + 1;
   label.innerText = `채팅 #${chatNumber}`;
   
-  label.onclick = (e) => handleBookmarkClick(e, row, id);
+  label.onclick = (e) => handlePinClick(e, row, id);
   return label;
 }
 
@@ -135,19 +135,19 @@ function createStarButton(id, row) {
   const starBtn = document.createElement("button");
   starBtn.className = "star-btn";
   starBtn.innerHTML = "⭐";
-  starBtn.title = "최근 북마크로 설정";
+  starBtn.title = "최근 책갈피로 설정";
   
   starBtn.onclick = (e) => handleStarClick(e, starBtn, id);
   return starBtn;
 }
 
-// 북마크 클릭 처리
-function handleBookmarkClick(e, row, id) {
+// 책갈피 클릭 처리
+function handlePinClick(e, row, id) {
   e.stopPropagation();
   
   animateClick(row);
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { type: 'JUMP_TO_BOOKMARK', id });
+    chrome.tabs.sendMessage(tabs[0].id, { type: 'JUMP_TO_PIN', id });
   });
 }
 
@@ -159,8 +159,8 @@ function handleStarClick(e, starBtn, id) {
   moveToTop(id);
 }
 
-// 북마크 애니메이션 설정
-function setupBookmarkAnimation(row, index) {
+// 책갈피 애니메이션 설정
+function setupPinAnimation(row, index) {
   row.style.opacity = "0";
   row.style.transform = "translateY(20px)";
   
@@ -187,12 +187,12 @@ function animateStar(starBtn) {
   }, 500);
 }
 
-// 북마크를 맨 위로 이동
+// 책갈피를 맨 위로 이동
 function moveToTop(id) {
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
     const reordered = data[CONSTANTS.STORAGE_KEY].filter((x) => x !== id).concat(id);
     chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: reordered }, () => {
-      showNotification("✨ 최근 북마크로 설정!", "success");
+      showNotification("✨ 최근 책갈피로 설정!", "success");
       setTimeout(() => location.reload(), CONSTANTS.ANIMATION.RELOAD_DELAY);
     });
   });
@@ -328,7 +328,7 @@ function setupSwipeToDelete(element, bookmarkId) {
     isDragging = false;
     
     if (hasMoved && Math.abs(deltaX) > CONSTANTS.SWIPE.THRESHOLD) {
-      deleteBookmark(element, bookmarkId);
+      deletePin(element, bookmarkId);
     } else {
       resetSwipeVisual(element);
     }
@@ -370,7 +370,7 @@ function setupSwipeToDelete(element, bookmarkId) {
       element.style.cursor = 'pointer';
       
       if (hasMoved && Math.abs(deltaX) > CONSTANTS.SWIPE.THRESHOLD) {
-        deleteBookmark(element, bookmarkId);
+        deletePin(element, bookmarkId);
       } else {
         resetSwipeVisual(element);
       }
@@ -399,8 +399,8 @@ function resetSwipeVisual(element) {
   element.style.background = '';
 }
 
-// 북마크 삭제
-function deleteBookmark(element, bookmarkId) {
+// 책갈피 삭제
+function deletePin(element, bookmarkId) {
   element.style.transition = 'all 0.4s ease';
   element.style.transform = 'translateX(100%) scale(0.8)';
   element.style.opacity = '0';
@@ -408,7 +408,7 @@ function deleteBookmark(element, bookmarkId) {
   chrome.storage.sync.get({ [CONSTANTS.STORAGE_KEY]: [] }, (data) => {
     const updated = data[CONSTANTS.STORAGE_KEY].filter(pin => pin !== bookmarkId);
     chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: updated }, () => {
-      showNotification("🗑️ 북마크 삭제됨", "info");
+      showNotification("🗑️ 책갈피 삭제됨", "info");
       
       setTimeout(() => {
         if (element.parentNode) {
@@ -430,7 +430,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     const newPins = changes[CONSTANTS.STORAGE_KEY].newValue || [];
     
     if (newPins.length > oldPins.length) {
-      showNotification("📌 북마크 추가 완료!", "success");
+              showNotification("📌 책갈피 추가 완료!", "success");
     }
   }
 });

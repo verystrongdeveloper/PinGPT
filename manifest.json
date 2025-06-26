@@ -1,9 +1,9 @@
 {
     "manifest_version": 3,
-    "name": "Chatpin",
+    "name": "PinGPT",
     "version": "0.1.0",
-    "description": "ChatGPT 대화에 스마트 북마크 기능을 추가하는 Chrome 확장 프로그램",
-    "author": "Chatpin Team",
+    "description": "ChatGPT 대화에 책갈피 기능을 추가하는 Chrome 확장 프로그램",
+    "author": "PinGPT Team",
     "permissions": [
         "storage",
         "activeTab",
@@ -15,7 +15,7 @@
     ],
     "action": {
         "default_popup": "popup.html",
-        "default_title": "Chatpin - 북마크 관리"
+        "default_title": "PinGPT - 책갈피 관리"
     },
     "content_scripts": [
         {
