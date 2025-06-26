@@ -1,6 +1,55 @@
 // PinGPT Chrome Extension - Content Script
 // ChatGPT 대화에 책갈피 기능을 추가하는 컨텐츠 스크립트
 
+// 번역 객체
+const TRANSLATIONS = {
+  en: {
+    addBookmark: "Add bookmark",
+    removeBookmark: "Remove bookmark",
+    bookmarkAdded: "📌 Bookmark added!",
+    bookmarkRemoved: "📌 Bookmark removed!",
+    jumpToRecent: "🎯 Jumped to recent bookmark!",
+    noBookmarks: "😅 No bookmarks found",
+    quickJumpBtn: "🧭 Jump to recent bookmark"
+  },
+  ko: {
+    addBookmark: "책갈피 추가",
+    removeBookmark: "책갈피 제거",
+    bookmarkAdded: "📌 책갈피 추가 완료!",
+    bookmarkRemoved: "📌 책갈피 제거됨!",
+    jumpToRecent: "🎯 최근 책갈피로 이동!",
+    noBookmarks: "😅 책갈피가 없습니다",
+    quickJumpBtn: "🧭 최근 책갈피로 이동"
+  },
+  ja: {
+    addBookmark: "ブックマークを追加",
+    removeBookmark: "ブックマークを削除",
+    bookmarkAdded: "📌 ブックマーク追加完了！",
+    bookmarkRemoved: "📌 ブックマーク削除済み！",
+    jumpToRecent: "🎯 最近のブックマークに移動！",
+    noBookmarks: "😅 ブックマークがありません",
+    quickJumpBtn: "🧭 最近のブックマークに移動"
+  },
+  zh: {
+    addBookmark: "添加书签",
+    removeBookmark: "移除书签",
+    bookmarkAdded: "📌 书签添加成功！",
+    bookmarkRemoved: "📌 书签已移除！",
+    jumpToRecent: "🎯 已跳转到最近书签！",
+    noBookmarks: "😅 没有找到书签",
+    quickJumpBtn: "🧭 跳转到最近书签"
+  },
+  es: {
+    addBookmark: "Añadir marcador",
+    removeBookmark: "Eliminar marcador",
+    bookmarkAdded: "📌 ¡Marcador añadido!",
+    bookmarkRemoved: "📌 ¡Marcador eliminado!",
+    jumpToRecent: "🎯 ¡Saltado al marcador reciente!",
+    noBookmarks: "😅 No se encontraron marcadores",
+    quickJumpBtn: "🧭 Saltar al marcador reciente"
+  }
+};
+
 // 상수 정의
 const CONSTANTS = {
   SELECTORS: {
@@ -10,24 +59,42 @@ const CONSTANTS = {
     QUICK_JUMP: '#pingpt-quickjump'
   },
   STORAGE_KEY: 'chatpins',
+  LANGUAGE_KEY: 'chatpinLanguage',
   DEBOUNCE_DELAY: 100,
   NOTIFICATION_DURATION: 2500,
   ANIMATION_DELAY: 10
 };
 
+let currentLanguage = 'ko';
+
 let observerTimeout;
+
+// 번역 함수
+function t(key) {
+  return TRANSLATIONS[currentLanguage]?.[key] || TRANSLATIONS['ko']?.[key] || key;
+}
+
+// 언어 로드 함수
+function loadLanguage(callback) {
+  chrome.storage.sync.get({ [CONSTANTS.LANGUAGE_KEY]: 'ko' }, (data) => {
+    currentLanguage = data[CONSTANTS.LANGUAGE_KEY];
+    callback();
+  });
+}
 
 // 메인 초기화 함수
 function initialize() {
-  // 페이지 로드 시 기존 책갈피 모두 삭제
-  clearAllBookmarks();
-  
-  assignUniqueIds();
-  injectPinButtons();
-  injectQuickJumpButton();
-  setupMutationObserver();
-  setupMessageListener();
-  setupStorageListener();
+  loadLanguage(() => {
+    // 페이지 로드 시 기존 책갈피 모두 삭제
+    clearAllBookmarks();
+    
+    assignUniqueIds();
+    injectPinButtons();
+    injectQuickJumpButton();
+    setupMutationObserver();
+    setupMessageListener();
+    setupStorageListener();
+  });
 }
 
 // 모든 책갈피 삭제 함수
@@ -80,7 +147,7 @@ function createPinButton(element) {
     filter: hue-rotate(240deg) saturate(1.2);
     transform: scale(1);
   `;
-  btn.title = '책갈피 추가';
+  btn.title = t('addBookmark');
 
   btn.onclick = () => handlePinClick(btn, element);
   return btn;
@@ -107,7 +174,7 @@ function addPin(btn, id, pins) {
   const updated = [...pins, id];
   chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: updated }, () => {
     updateButtonVisual(btn, true);
-    showNotification("📌 책갈피 추가 완료!", "success");
+    showNotification(t('bookmarkAdded'), "success");
     scrollToPin(id);
   });
 }
@@ -117,7 +184,7 @@ function removePin(btn, id, pins) {
   const updated = pins.filter(pin => pin !== id);
   chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: updated }, () => {
     updateButtonVisual(btn, false);
-    showNotification("📌 책갈피 제거됨!", "info");
+    showNotification(t('bookmarkRemoved'), "info");
   });
 }
 
@@ -138,12 +205,12 @@ function updateButtonState(btn, id, isPinned = null) {
 function updateButtonVisual(btn, isPinned) {
   if (isPinned) {
     btn.style.filter = 'none';
-    btn.title = '책갈피 제거';
+    btn.title = t('removeBookmark');
     btn.style.transform = 'scale(1.2)';
     btn.dataset.pinned = 'true';
   } else {
     btn.style.filter = 'hue-rotate(240deg) saturate(1.2)';
-    btn.title = '책갈피 추가';
+    btn.title = t('addBookmark');
     btn.style.transform = 'scale(1)';
     btn.dataset.pinned = 'false';
   }
@@ -163,7 +230,7 @@ function injectQuickJumpButton() {
   
   const btn = document.createElement('button');
   btn.id = 'pingpt-quickjump';
-  btn.innerText = '🧭 최근 책갈피로 이동';
+  btn.innerText = t('quickJumpBtn');
   btn.style.cssText = `
     position: fixed;
     bottom: 20px;
@@ -203,9 +270,9 @@ function handleQuickJump() {
     
     if (lastPin) {
       scrollToPin(lastPin);
-      showNotification("🎯 최근 책갈피로 이동!", "info");
+      showNotification(t('jumpToRecent'), "info");
     } else {
-      showNotification("😅 책갈피가 없습니다", "info");
+      showNotification(t('noBookmarks'), "info");
     }
   });
 }
@@ -272,11 +339,34 @@ function setupMessageListener() {
 // 스토리지 변경 리스너 설정
 function setupStorageListener() {
   chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'sync' && changes[CONSTANTS.STORAGE_KEY]) {
-      const newPins = changes[CONSTANTS.STORAGE_KEY].newValue || [];
-      updateAllButtonStates(newPins);
+    if (namespace === 'sync') {
+      if (changes[CONSTANTS.STORAGE_KEY]) {
+        const newPins = changes[CONSTANTS.STORAGE_KEY].newValue || [];
+        updateAllButtonStates(newPins);
+      }
+      
+      // 언어 변경 감지
+      if (changes[CONSTANTS.LANGUAGE_KEY]) {
+        currentLanguage = changes[CONSTANTS.LANGUAGE_KEY].newValue || 'ko';
+        updateAllUILanguage();
+      }
     }
   });
+}
+
+// 모든 UI 언어 업데이트
+function updateAllUILanguage() {
+  // 모든 버튼의 타이틀 업데이트
+  document.querySelectorAll(CONSTANTS.SELECTORS.PIN_BTN).forEach(btn => {
+    const isPinned = btn.dataset.pinned === 'true';
+    btn.title = isPinned ? t('removeBookmark') : t('addBookmark');
+  });
+  
+  // 빠른 이동 버튼 텍스트 업데이트
+  const quickJumpBtn = document.getElementById('pingpt-quickjump');
+  if (quickJumpBtn) {
+    quickJumpBtn.innerText = t('quickJumpBtn');
+  }
 }
 
 // 모든 버튼 상태 업데이트
