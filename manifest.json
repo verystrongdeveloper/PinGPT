@@ -6,8 +6,7 @@
     "author": "PinGPT Team",
     "permissions": [
         "storage",
-        "activeTab",
-        "scripting"
+        "activeTab"
     ],
     "host_permissions": [
         "https://chat.openai.com/*",
