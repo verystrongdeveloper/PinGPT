@@ -264,7 +264,7 @@ function updateButtonVisual(btn, isPinned) {
 function scrollToPin(id) {
   const el = document.querySelector(`[data-pingpt-id="${id}"]`);
   if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
