@@ -45,7 +45,7 @@
 ### 개발자 모드 설치
 ```bash
 # 1. 저장소 복제
-git clone https://github.com/your-username/PinGPT.git
+git clone https://github.com/verystrongdeveloper/PinGPT.git
 
 # 2. Chrome 확장 프로그램 관리 페이지로 이동
 # chrome://extensions/
