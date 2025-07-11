@@ -291,7 +291,7 @@ function createPinLabel(id, index, row) {
     }
   });
   
-  label.onclick = (e) => handlePinClick(e, row, id);
+  label.onclick = (e) => handleLabelClick(e, row, id, label);
   return label;
 }
 
@@ -315,6 +315,34 @@ function createStarButton(id, row) {
   
   starBtn.onclick = (e) => handleStarClick(e, starBtn, id);
   return starBtn;
+}
+
+// 라벨 클릭 처리 - 클릭 위치에 따라 분기
+function handleLabelClick(e, row, id, label) {
+  e.stopPropagation();
+  
+  // 실제 텍스트 너비 계산
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  const computedStyle = window.getComputedStyle(label);
+  context.font = `${computedStyle.fontWeight} ${computedStyle.fontSize} ${computedStyle.fontFamily}`;
+  const textWidth = context.measureText(label.innerText).width;
+  
+  // 마지막 글자 예상 너비 계산 (평균 글자 크기)
+  const avgCharWidth = textWidth / label.innerText.length;
+  const lastCharZone = Math.max(avgCharWidth, 12); // 최소 12px
+  
+  // 클릭 위치 확인
+  const clickPosition = e.offsetX;
+  const rightEndZone = 20; // 텍스트 끝에서 20px 영역
+  
+  if (clickPosition > textWidth - lastCharZone && clickPosition <= textWidth + rightEndZone) {
+    // 마지막 글자 ~ 끝+20px 영역 클릭 -> 이름 변경
+    handleRenameClick(e, id, label);
+  } else {
+    // 나머지 영역 클릭 -> 채팅으로 이동
+    handlePinClick(e, row, id);
+  }
 }
 
 // 책갈피 클릭 처리
