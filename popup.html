@@ -269,6 +269,233 @@
       color: white;
       border: none;
     }
+
+    /* 프리셋 스타일 */
+    .presets-section {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .presets-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .presets-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .add-preset-btn {
+      background: var(--primary-gradient);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+    }
+
+    .add-preset-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .add-preset-btn:active {
+      transform: translateY(0);
+    }
+
+    .preset-item {
+      cursor: pointer;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      background: var(--bg-primary);
+      border: 2px solid #f1f5f9;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+    }
+
+    .preset-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #e0e7ff;
+    }
+
+    .preset-icon {
+      font-size: 14px;
+      margin-right: 10px;
+      opacity: 0.8;
+    }
+
+    .preset-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .preset-url {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+
+    .delete-preset-btn {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 10px;
+      color: white;
+      transition: all 0.3s ease;
+      opacity: 0.7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .delete-preset-btn:hover {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+
+    .preset-item:hover .delete-preset-btn {
+      opacity: 1;
+    }
+
+    /* 모달 스타일 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 24px;
+      width: 320px;
+      max-width: 90%;
+      box-shadow: var(--shadow-hover);
+      position: relative;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      transition: border-color 0.3s ease;
+    }
+
+    .modal-input:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+
+    .modal-input-group {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .current-url-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--primary-gradient);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 10px;
+      padding: 4px 8px;
+      transition: all 0.3s ease;
+    }
+
+    .current-url-btn:hover {
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .modal-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .modal-btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+
+    .modal-btn-secondary {
+      background: #f3f4f6;
+      color: var(--text-secondary);
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .section-divider {
+      margin: 16px 0;
+      height: 1px;
+      background: #e5e7eb;
+    }
+
+    .pins-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -277,7 +504,36 @@
     <div class="subtitle">저장된 대화에 빠르게 접근</div>
   </div>
   <div class="content" id="content">
-    <div id="pin-list"></div>
+    <!-- 프리셋 섹션 -->
+    <div class="presets-section" id="presets-section">
+      <div class="presets-header">
+        <h3 class="presets-title">🎯 프리셋</h3>
+        <button class="add-preset-btn" id="add-preset-btn">➕ 추가</button>
+      </div>
+      <div id="presets-list"></div>
+    </div>
+
+    <!-- 현재 세션 핀 목록 -->
+    <div class="pins-section">
+      <h3 class="pins-section-title">📌 현재 세션</h3>
+      <div id="pin-list"></div>
+    </div>
+  </div>
+
+  <!-- 프리셋 생성 모달 -->
+  <div class="modal-overlay hidden" id="preset-modal">
+    <div class="modal">
+      <h3 class="modal-title">프리셋 생성</h3>
+      <input type="text" class="modal-input" id="preset-name" placeholder="프리셋 이름을 입력하세요">
+      <div class="modal-input-group">
+        <input type="text" class="modal-input" id="preset-url" placeholder="채팅 링크를 입력하세요 (예: https://chatgpt.com/c/...)">
+        <button class="current-url-btn" id="current-url-btn">현재 주소</button>
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-secondary" id="cancel-preset-btn">취소</button>
+        <button class="modal-btn modal-btn-primary" id="create-preset-btn">생성</button>
+      </div>
+    </div>
   </div>
 
   <script src="popup.js"></script>

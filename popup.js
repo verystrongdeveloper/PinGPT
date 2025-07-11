@@ -17,7 +17,23 @@ const TRANSLATIONS = {
     bookmarkRemoved: "Bookmark removed",
     jumpToRecent: "Jumped to recent bookmark!",
     noBookmarks: "😅 No bookmarks found",
-    quickJump: "🧭 Jump to recent bookmark"
+    quickJump: "🧭 Jump to recent bookmark",
+    // 프리셋 관련 번역
+    presets: "🎯 Presets",
+    addPreset: "➕ Add",
+    currentSession: "📌 Current Session",
+    createPreset: "Create Preset",
+    presetName: "Enter preset name",
+    presetUrl: "Enter chat link (e.g., https://chatgpt.com/c/...)",
+    currentUrl: "Current URL",
+    cancel: "Cancel",
+    create: "Create",
+    presetCreated: "Preset created!",
+    presetDeleted: "Preset deleted!",
+    presetLoaded: "Preset loaded!",
+    invalidUrl: "Invalid URL format",
+    presetNameRequired: "Preset name is required",
+    presetUrlRequired: "Chat URL is required"
   },
   ko: {
     title: "📌 PinGPT",
@@ -34,7 +50,23 @@ const TRANSLATIONS = {
     bookmarkRemoved: "책갈피 삭제됨",
     jumpToRecent: "최근 책갈피로 이동!",
     noBookmarks: "😅 책갈피가 없습니다",
-    quickJump: "🧭 최근 책갈피로 이동"
+    quickJump: "🧭 최근 책갈피로 이동",
+    // 프리셋 관련 번역
+    presets: "🎯 프리셋",
+    addPreset: "➕ 추가",
+    currentSession: "📌 현재 세션",
+    createPreset: "프리셋 생성",
+    presetName: "프리셋 이름을 입력하세요",
+    presetUrl: "채팅 링크를 입력하세요 (예: https://chatgpt.com/c/...)",
+    currentUrl: "현재 주소",
+    cancel: "취소",
+    create: "생성",
+    presetCreated: "프리셋이 생성되었습니다!",
+    presetDeleted: "프리셋이 삭제되었습니다!",
+    presetLoaded: "프리셋이 로드되었습니다!",
+    invalidUrl: "잘못된 URL 형식입니다",
+    presetNameRequired: "프리셋 이름을 입력해주세요",
+    presetUrlRequired: "채팅 URL을 입력해주세요"
   },
   ja: {
     title: "📌 PinGPT",
@@ -51,7 +83,23 @@ const TRANSLATIONS = {
     bookmarkRemoved: "ブックマーク削除済み！",
     jumpToRecent: "最近のブックマークに移動！",
     noBookmarks: "😅 ブックマークがありません",
-    quickJump: "🧭 最近のブックマークに移動"
+    quickJump: "🧭 最近のブックマークに移動",
+    // 프리셋 관련 번역
+    presets: "🎯 プリセット",
+    addPreset: "➕ 追加",
+    currentSession: "📌 現在のセッション",
+    createPreset: "プリセット作成",
+    presetName: "プリセット名を入力してください",
+    presetUrl: "チャットリンクを入力してください (例: https://chatgpt.com/c/...)",
+    currentUrl: "現在のURL",
+    cancel: "キャンセル",
+    create: "作成",
+    presetCreated: "プリセットが作成されました！",
+    presetDeleted: "プリセットが削除されました！",
+    presetLoaded: "プリセットがロードされました！",
+    invalidUrl: "無効なURL形式です",
+    presetNameRequired: "プリセット名を入力してください",
+    presetUrlRequired: "チャットURLを入力してください"
   },
   zh: {
     title: "📌 PinGPT",
@@ -68,7 +116,23 @@ const TRANSLATIONS = {
     bookmarkRemoved: "书签已移除！",
     jumpToRecent: "已跳转到最近书签！",
     noBookmarks: "😅 没有找到书签",
-    quickJump: "🧭 跳转到最近书签"
+    quickJump: "🧭 跳转到最近书签",
+    // 프리셋 관련 번역
+    presets: "🎯 预设",
+    addPreset: "➕ 添加",
+    currentSession: "📌 当前会话",
+    createPreset: "创建预设",
+    presetName: "请输入预设名称",
+    presetUrl: "请输入聊天链接 (例: https://chatgpt.com/c/...)",
+    currentUrl: "当前地址",
+    cancel: "取消",
+    create: "创建",
+    presetCreated: "预设已创建！",
+    presetDeleted: "预设已删除！",
+    presetLoaded: "预设已加载！",
+    invalidUrl: "无效的URL格式",
+    presetNameRequired: "请输入预设名称",
+    presetUrlRequired: "请输入聊天URL"
   },
   es: {
     title: "📌 PinGPT",
@@ -85,7 +149,23 @@ const TRANSLATIONS = {
     bookmarkRemoved: "¡Marcador eliminado!",
     jumpToRecent: "¡Saltado al marcador reciente!",
     noBookmarks: "😅 No se encontraron marcadores",
-    quickJump: "🧭 Saltar al marcador reciente"
+    quickJump: "🧭 Saltar al marcador reciente",
+    // 프리셋 관련 번역
+    presets: "🎯 Presets",
+    addPreset: "➕ Añadir",
+    currentSession: "📌 Sesión Actual",
+    createPreset: "Crear Preset",
+    presetName: "Ingrese el nombre del preset",
+    presetUrl: "Ingrese el enlace del chat (ej: https://chatgpt.com/c/...)",
+    currentUrl: "URL Actual",
+    cancel: "Cancelar",
+    create: "Crear",
+    presetCreated: "¡Preset creado!",
+    presetDeleted: "¡Preset eliminado!",
+    presetLoaded: "¡Preset cargado!",
+    invalidUrl: "Formato de URL inválido",
+    presetNameRequired: "Se requiere el nombre del preset",
+    presetUrlRequired: "Se requiere la URL del chat"
   }
 };
 
@@ -93,6 +173,7 @@ const TRANSLATIONS = {
 const CONSTANTS = {
   STORAGE_KEY: 'chatpins',
   NAMES_KEY: 'chatpinNames',
+  PRESETS_KEY: 'chatpinPresets',
   LANGUAGE_KEY: 'chatpinLanguage',
   DIMENSIONS: {
     MIN_HEIGHT: 260,
@@ -151,7 +232,9 @@ function initializePopup() {
     const content = document.getElementById('content');
     setInitialHeight();
     loadPins(pinList, content);
+    loadPresets(); // 프리셋 로드 추가
     setupLanguageSelector();
+    setupPresetEventListeners(); // 프리셋 이벤트 리스너 설정
   });
 }
 
@@ -183,6 +266,17 @@ function changeLanguage(languageCode) {
 function updateUILanguage() {
   document.querySelector('.title').textContent = t('title');
   document.querySelector('.subtitle').textContent = t('subtitle');
+  
+  // 프리셋 관련 UI 업데이트
+  document.querySelector('.presets-title').textContent = t('presets');
+  document.querySelector('.add-preset-btn').textContent = t('addPreset');
+  document.querySelector('.pins-section-title').textContent = t('currentSession');
+  document.querySelector('.modal-title').textContent = t('createPreset');
+  document.querySelector('#preset-name').placeholder = t('presetName');
+  document.querySelector('#preset-url').placeholder = t('presetUrl');
+  document.querySelector('#current-url-btn').textContent = t('currentUrl');
+  document.querySelector('#cancel-preset-btn').textContent = t('cancel');
+  document.querySelector('#create-preset-btn').textContent = t('create');
   
   // 모든 버튼의 title 업데이트
   document.querySelectorAll('.rename-btn').forEach(btn => {
@@ -826,4 +920,254 @@ function setupLanguageSelector() {
   selector.addEventListener('change', (e) => changeLanguage(e.target.value));
   selector.title = 'Change language';
   header.appendChild(selector);
+}
+
+// ============= 프리셋 관련 함수들 =============
+
+// 프리셋 로드
+function loadPresets() {
+  chrome.storage.sync.get({ [CONSTANTS.PRESETS_KEY]: [] }, (data) => {
+    const presets = data[CONSTANTS.PRESETS_KEY] || [];
+    renderPresets(presets);
+  });
+}
+
+// 프리셋 렌더링
+function renderPresets(presets) {
+  const presetsList = document.getElementById('presets-list');
+  presetsList.innerHTML = '';
+  
+  if (presets.length === 0) {
+    const emptyState = document.createElement('div');
+    emptyState.className = 'empty-state';
+    emptyState.style.height = '60px';
+    emptyState.style.padding = '20px';
+    emptyState.innerHTML = `
+      <div style="font-size: 12px; color: var(--text-secondary); opacity: 0.7;">
+        아직 프리셋이 없습니다
+      </div>
+    `;
+    presetsList.appendChild(emptyState);
+    return;
+  }
+  
+  presets.forEach(preset => {
+    const presetElement = createPresetElement(preset);
+    presetsList.appendChild(presetElement);
+  });
+}
+
+// 프리셋 요소 생성
+function createPresetElement(preset) {
+  const element = document.createElement('div');
+  element.className = 'preset-item';
+  element.dataset.presetId = preset.id;
+  
+  const shortUrl = preset.chatUrl.replace(/^https?:\/\//, '').substring(0, 30) + '...';
+  
+  element.innerHTML = `
+    <span class="preset-icon">🎯</span>
+    <div style="flex: 1;">
+      <div class="preset-name">${preset.name}</div>
+      <div class="preset-url">${shortUrl}</div>
+    </div>
+    <button class="delete-preset-btn" title="삭제">×</button>
+  `;
+  
+  // 프리셋 클릭 이벤트
+  element.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('delete-preset-btn')) {
+      loadPresetAndNavigate(preset);
+    }
+  });
+  
+  // 삭제 버튼 이벤트
+  element.querySelector('.delete-preset-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    deletePreset(preset.id);
+  });
+  
+  return element;
+}
+
+// 프리셋 이벤트 리스너 설정
+function setupPresetEventListeners() {
+  const addPresetBtn = document.getElementById('add-preset-btn');
+  const presetModal = document.getElementById('preset-modal');
+  const cancelBtn = document.getElementById('cancel-preset-btn');
+  const createBtn = document.getElementById('create-preset-btn');
+  const currentUrlBtn = document.getElementById('current-url-btn');
+  
+  // 프리셋 추가 버튼
+  addPresetBtn.addEventListener('click', () => {
+    showPresetModal();
+  });
+  
+  // 모달 닫기 (배경 클릭)
+  presetModal.addEventListener('click', (e) => {
+    if (e.target === presetModal) {
+      hidePresetModal();
+    }
+  });
+  
+  // 취소 버튼
+  cancelBtn.addEventListener('click', () => {
+    hidePresetModal();
+  });
+  
+  // 생성 버튼
+  createBtn.addEventListener('click', () => {
+    createPreset();
+  });
+  
+  // 현재 주소 버튼
+  currentUrlBtn.addEventListener('click', () => {
+    getCurrentTabUrl();
+  });
+  
+  // Enter 키 처리
+  document.getElementById('preset-name').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      createPreset();
+    }
+  });
+  
+  document.getElementById('preset-url').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      createPreset();
+    }
+  });
+}
+
+// 프리셋 모달 표시
+function showPresetModal() {
+  const modal = document.getElementById('preset-modal');
+  const nameInput = document.getElementById('preset-name');
+  const urlInput = document.getElementById('preset-url');
+  
+  nameInput.value = '';
+  urlInput.value = '';
+  modal.classList.remove('hidden');
+  nameInput.focus();
+}
+
+// 프리셋 모달 숨기기
+function hidePresetModal() {
+  const modal = document.getElementById('preset-modal');
+  modal.classList.add('hidden');
+}
+
+// 현재 탭 URL 가져오기
+function getCurrentTabUrl() {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      const url = tabs[0].url;
+      if (url.includes('chatgpt.com/c/') || url.includes('chat.openai.com/c/')) {
+        document.getElementById('preset-url').value = url;
+      } else {
+        showNotification('ChatGPT 채팅 페이지에서만 사용할 수 있습니다', 'error');
+      }
+    }
+  });
+}
+
+// 프리셋 생성
+function createPreset() {
+  const nameInput = document.getElementById('preset-name');
+  const urlInput = document.getElementById('preset-url');
+  const name = nameInput.value.trim();
+  const url = urlInput.value.trim();
+  
+  // 유효성 검사
+  if (!name) {
+    showNotification(t('presetNameRequired'), 'error');
+    nameInput.focus();
+    return;
+  }
+  
+  if (!url) {
+    showNotification(t('presetUrlRequired'), 'error');
+    urlInput.focus();
+    return;
+  }
+  
+  if (!isValidChatUrl(url)) {
+    showNotification(t('invalidUrl'), 'error');
+    urlInput.focus();
+    return;
+  }
+  
+  // 현재 핀 데이터 가져오기
+  chrome.storage.sync.get({ 
+    [CONSTANTS.STORAGE_KEY]: [], 
+    [CONSTANTS.NAMES_KEY]: {},
+    [CONSTANTS.PRESETS_KEY]: [] 
+  }, (data) => {
+    const currentPins = data[CONSTANTS.STORAGE_KEY] || [];
+    const currentNames = data[CONSTANTS.NAMES_KEY] || {};
+    const presets = data[CONSTANTS.PRESETS_KEY] || [];
+    
+    const newPreset = {
+      id: `preset_${Date.now()}`,
+      name: name,
+      chatUrl: url,
+      pins: [...currentPins],
+      pinNames: { ...currentNames },
+      createdAt: Date.now()
+    };
+    
+    const updatedPresets = [...presets, newPreset];
+    
+    chrome.storage.sync.set({ 
+      [CONSTANTS.PRESETS_KEY]: updatedPresets 
+    }, () => {
+      hidePresetModal();
+      loadPresets();
+      showNotification(t('presetCreated'), 'success');
+    });
+  });
+}
+
+// 프리셋 삭제
+function deletePreset(presetId) {
+  chrome.storage.sync.get({ [CONSTANTS.PRESETS_KEY]: [] }, (data) => {
+    const presets = data[CONSTANTS.PRESETS_KEY] || [];
+    const updatedPresets = presets.filter(preset => preset.id !== presetId);
+    
+    chrome.storage.sync.set({ 
+      [CONSTANTS.PRESETS_KEY]: updatedPresets 
+    }, () => {
+      loadPresets();
+      showNotification(t('presetDeleted'), 'success');
+    });
+  });
+}
+
+// 프리셋 로드 및 이동
+function loadPresetAndNavigate(preset) {
+  // 프리셋의 핀 데이터를 현재 저장소에 저장
+  chrome.storage.sync.set({
+    [CONSTANTS.STORAGE_KEY]: preset.pins || [],
+    [CONSTANTS.NAMES_KEY]: preset.pinNames || {}
+  }, () => {
+    // 채팅 페이지로 이동
+    chrome.tabs.create({ url: preset.chatUrl }, () => {
+      showNotification(t('presetLoaded'), 'success');
+      // 팝업 닫기
+      window.close();
+    });
+  });
+}
+
+// URL 유효성 검사
+function isValidChatUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    return (
+      (urlObj.hostname === 'chatgpt.com' || urlObj.hostname === 'chat.openai.com') &&
+      urlObj.pathname.includes('/c/')
+    );
+  } catch {
+    return false;
+  }
 }

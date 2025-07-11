@@ -59,6 +59,8 @@ const CONSTANTS = {
     QUICK_JUMP: '#pingpt-quickjump'
   },
   STORAGE_KEY: 'chatpins',
+  NAMES_KEY: 'chatpinNames',
+  PRESETS_KEY: 'chatpinPresets',
   LANGUAGE_KEY: 'chatpinLanguage',
   DEBOUNCE_DELAY: 100,
   NOTIFICATION_DURATION: 2500,
@@ -129,8 +131,8 @@ function loadLanguage(callback) {
 // 메인 초기화 함수
 function initialize() {
   loadLanguage(() => {
-    // 페이지 로드 시 기존 책갈피 모두 삭제
-    clearAllBookmarks();
+    // 프리셋 복원 시도, 실패시 기존 로직 실행
+    restorePresetOrClear();
     
     assignUniqueIds();
     injectPinButtons();
@@ -141,7 +143,39 @@ function initialize() {
   });
 }
 
-// 모든 책갈피 삭제 함수
+// 프리셋 복원 또는 초기화
+function restorePresetOrClear() {
+  const currentUrl = window.location.href;
+  
+  // 프리셋에서 현재 URL에 해당하는 데이터 찾기
+  chrome.storage.sync.get([CONSTANTS.PRESETS_KEY], (data) => {
+    const presets = data[CONSTANTS.PRESETS_KEY] || [];
+    const matchingPreset = presets.find(preset => 
+      preset.chatUrl === currentUrl || 
+      preset.chatUrl === currentUrl.split('?')[0] || // 쿼리 파라미터 제거하고 비교
+      currentUrl.includes(preset.chatUrl.split('/c/')[1]?.split('?')[0]) // 채팅 ID만 비교
+    );
+    
+    if (matchingPreset) {
+      // 프리셋 데이터 복원
+      console.log('PinGPT: 프리셋 데이터 복원 중...', matchingPreset.name);
+      chrome.storage.sync.set({
+        [CONSTANTS.STORAGE_KEY]: matchingPreset.pins || [],
+        [CONSTANTS.NAMES_KEY]: matchingPreset.pinNames || {}
+      }, () => {
+        console.log('PinGPT: 프리셋 복원 완료');
+        setTimeout(() => {
+          updateAllButtonStates();
+        }, 500);
+      });
+    } else {
+      // 매칭되는 프리셋이 없으면 기존처럼 초기화
+      clearAllBookmarks();
+    }
+  });
+}
+
+// 모든 책갈피 삭제 함수 (기존 함수 유지)
 function clearAllBookmarks() {
   // 페이지 로드 시마다 항상 책갈피 초기화
   chrome.storage.sync.set({ [CONSTANTS.STORAGE_KEY]: [] }, () => {
@@ -149,7 +183,7 @@ function clearAllBookmarks() {
   });
   
   // 네임스 키도 초기화
-  chrome.storage.sync.set({ 'chatpinNames': {} }, () => {
+  chrome.storage.sync.set({ [CONSTANTS.NAMES_KEY]: {} }, () => {
     console.log('PinGPT: 책갈피 이름 초기화');
   });
 }
